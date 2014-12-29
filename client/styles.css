@@ -1,0 +1,32 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.container {
+  margin:auto;
+  padding:8rem;
+  max-width: 800px;
+}
+
+.text-red {
+  color:#FF0000;
+}
+.text-green {
+  color:#00A100;
+}
+
+.hand-list {
+  padding:3rem 0 0 0;
+  list-style-position: outside;
+  list-style-type: none;
+}
+
+.hand-list > li {
+  display: inline-block;
+  width:45%;
+  padding: 0;
+}
+
+a:link, a:visited, a:hover, a:active {
+  color:#000000;
+}

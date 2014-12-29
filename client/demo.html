@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <title>Funicular.js Demo</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link href="styles.css" rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+
+  <div class="container">
+    <div id="information">
+      <a href="https://github.com/adeniszczyc/Funicular.js"><h2>Funicular.js</h2></a>
+      <p>Kinect to JS communication using Python with WebSockets.</p>
+      <p>
+    </div>
+    <div id="socket_status" class="text-red">Not connected</div>
+    <ul id="hands" class="hand-list">
+
+    </ul>
+  </div>
+
+  <script src="kinect.js"></script>
+  <script>
+
+  var el_socket_status = document.getElementById("socket_status");
+  var el_hands_list = document.getElementById("hands");
+
+  function diplay_coordinates(elem, hand) {
+
+    elem.innerHTML = "<h3>Hand " + hand.id + "</h3>x: " + hand.x + " <br/>y: " + hand.y + " <br/>z: " + hand.z;
+    return elem
+
+  }
+
+  // Connected to websocket server
+  Funicular.onSocketOpen = function() {
+
+    el_socket_status.innerHTML = "Connected - Wave to start hand tracking"
+    el_socket_status.classList.remove("text-red");
+    el_socket_status.classList.add("text-green");
+
+  }
+
+  // Disconnected from websocket server
+  Funicular.onSocketClose = function() {
+
+    el_socket_status.innerHTML = "Not connected"
+    el_socket_status.classList.remove("text-green");
+    el_socket_status.classList.add("text-red");
+
+  }
+
+  // Hand detected, now tracking
+  Funicular.onHandsRegister = function(hand) {
+
+    el_socket_status.innerHTML = "Connected";
+
+    var element = document.createElement("li");
+    element = diplay_coordinates(element, hand)
+    element.setAttribute("id", "hand-" + hand.id);  
+
+    el_hands_list.appendChild(element);
+
+  }
+
+  // Hand moved
+  Funicular.onHandsMove = function(hands) {
+
+    for (var i = 0; i < hands.length; i++) {
+      var element = document.getElementById("hand-" + hands[i].id);
+      element = diplay_coordinates(element, hands[i])
+    }
+
+  }
+
+  // Hand tracking lost hand, no longer tracking
+  Funicular.onHandsUnregister = function(hand) {
+
+    var element = document.getElementById("hand-" + hand.id);
+    element.parentNode.removeChild(element);
+
+  }
+  </script>
+  </body>
+</html>
