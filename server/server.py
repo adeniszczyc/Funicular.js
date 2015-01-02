@@ -5,10 +5,9 @@
 # Run through terminal with:
 # $ python server.py
 
-#### ------- Config Settings ------- ####
+#### ------- Settings ------- ####
 
 port = 8888
-
 
 #### ------- Imports ------- ####
 
@@ -34,6 +33,8 @@ import copy
 
 #### ------- Kinect / OpenNI Communication ------- ####
 
+# Global variables used for communicating between Kinect thread and main thread.
+# It would be great to find a cleaner solution to this.
 q = Queue()
 hands = {"hands": {}}
 
@@ -58,20 +59,25 @@ class kinect(Thread):
     self.hands_generator = HandsGenerator()
     self.hands_generator.create(self.context)
   
+    ## PyOpenNI gesture has been detected.
     def gesture_detected(src, gesture, id, end_point):
 
         self.hands_generator.start_tracking(end_point)
 
+        # Send gesture and coordinates to the browser.   
         q.put({"type": "gesture", "gesture": gesture, "end_point": end_point})
+        
         if gesture == "Click":
           print "Gesture Detected: Click"
 
         elif gesture == "Wave":
             print "Gesture Detected: Wave"
 
+    ## PyOpenNI gesture is in progress.
     def gesture_progress(src, gesture, id, end_point):
         pass
 
+    ## Hand has been detected, now tracking.
     def create(src, id, pos, time):
 
         coordinates = {}
@@ -80,10 +86,12 @@ class kinect(Thread):
         coordinates["y"] = pos[1]
         coordinates["z"] = pos[2]
 
+        # Send hand id and coordinates to the browser.
         q.put({"type": "register", "id": id, "x": pos[0], "y": pos[1], "z": pos[2]})
 
         print 'Detected hand, now tracking.'
 
+    ## Update hand tracking.
     def update(src, id, pos, time):
       global hands
      
@@ -95,9 +103,11 @@ class kinect(Thread):
 
       hands["hands"][id] = coordinates
 
+    ## Hand has been lost, no longer tracking.
     def destroy(src, id, time):
         global hands
 
+        # Send hand id to the browser.
         q.put({"type": "unregister", "id": id})
         
         try:
