@@ -1,11 +1,56 @@
 # Funicular.js
-Kinect to JS communication using Python with WebSockets.
+Microsoft Kinect to JS communication using Python with WebSockets.
 ### Dependencies
 - Kinect Sensor v1
 - [OpenNI](https://github.com/OpenNI/OpenNI)
 - [PyOpenNI](https://github.com/jmendeth/PyOpenNI)
 - [Tornado](http://www.tornadoweb.org/en/stable/)
 - Local webserver: eg [MAMP](http://www.mamp.info/en/), [XAMPP](https://www.apachefriends.org/index.html)
+
+### Usage
+First run the Python `server.py` script to start the Kinect tracking and websocket server.
+```
+$ python server.py
+```
+In a HTML file, load in the ```funicular.js``` file and add the following JavaScript. 
+```
+<script src="funicular.js"></script>
+<script>
+
+  /* Override Funicular functions as shown below: */
+
+  window.Funicular = {
+
+    // Connected to websocket server
+    onSocketOpen: function() {},
+
+    // Disconnected from websocket server
+    onSocketClose: function() {},
+    onSocketMessage: function() {},
+
+    // Detected wave gesture
+    // x, y, z are coordinates of gesture
+    onGestureWave: function(x, y, z) {},
+
+    // Detected click gesture
+    // x, y, z are coordinates of gesture
+    onGestureClick: function(x, y, z) {},
+
+    // Hand detected, now tracking
+    // hand: {id, x, y, z}
+    onHandsRegister: function(hand) {},
+
+    // Hand moved.
+    // hands: [{id, x, y, z}]
+    onHandsMove: function(hands) {},
+
+    // Hand tracking lost hand, no longer tracking
+    // hand: {id}
+    onHandsUnregister: function(hand) {}
+  };
+
+</script>
+```
 
 ### Setting Dependencies Up
 *Note: Funicular.js has only been tested on OS X Yosemite running Python 2.7.6. It has been tested in Safari 8.0.2 and Google Chrome 39*
@@ -20,7 +65,7 @@ Kinect to JS communication using Python with WebSockets.
     git clone git@github.com:adeniszczyc/Funicular.js.git
     ```
 2. Ensure your Kinect is plugged into USB and connected to a power source.
-3. From Terminal, run the Python websocket file
+3. From Terminal, run the Python websocket file:
   ```
   $ python server.py
   ```
